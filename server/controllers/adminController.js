@@ -94,6 +94,16 @@ const adminUpdateOrderStatus = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({ role: { $ne: 'admin' } }).select('-password');
+    res.status(200).json(users);
+  } catch (err) {
+    res.status(500).json({ message: 'Error fetching users' });
+  }
+};
+
+
 module.exports = {
   getPendingRestaurants,
   approveRestaurant,
@@ -101,4 +111,5 @@ module.exports = {
   getAllOrders,
   updateOrderStatus,
   adminUpdateOrderStatus,
+  getAllUsers,
 };

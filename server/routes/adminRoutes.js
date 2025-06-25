@@ -5,7 +5,8 @@ const {
   approveRestaurant,
   deleteRestaurant,
   getAllOrders,
-  adminUpdateOrderStatus, // ✅ new controller method
+  adminUpdateOrderStatus,
+  getAllUsers,
 } = require('../controllers/adminController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -18,8 +19,10 @@ router.delete('/restaurants/:id', authMiddleware, roleMiddleware('admin'), delet
 
 // 🧾 View all orders
 router.get('/orders', authMiddleware, roleMiddleware('admin'), getAllOrders);
+router.get('/users', authMiddleware, roleMiddleware('admin'), getAllUsers);
 
 // ✅ Admin update order status
 router.put('/orders/:id/status', authMiddleware, roleMiddleware('admin'), adminUpdateOrderStatus);
+
 
 module.exports = router;
