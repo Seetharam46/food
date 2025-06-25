@@ -1,11 +1,11 @@
-// server/routes/adminRoutes.js
 const express = require('express');
 const router = express.Router();
 const {
   getPendingRestaurants,
   approveRestaurant,
   deleteRestaurant,
-  getAllOrders, // 👈 new controller
+  getAllOrders,
+  adminUpdateOrderStatus, // ✅ new controller method
 } = require('../controllers/adminController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -18,5 +18,8 @@ router.delete('/restaurants/:id', authMiddleware, roleMiddleware('admin'), delet
 
 // 🧾 View all orders
 router.get('/orders', authMiddleware, roleMiddleware('admin'), getAllOrders);
+
+// ✅ Admin update order status
+router.put('/orders/:id/status', authMiddleware, roleMiddleware('admin'), adminUpdateOrderStatus);
 
 module.exports = router;

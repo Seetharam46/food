@@ -1,4 +1,3 @@
-// server/controllers/adminController.js
 const User = require('../models/User');
 const Order = require('../models/Order');
 
@@ -59,9 +58,47 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+// ✅ Admin - Update order status
+const updateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    order.status = status;
+    await order.save();
+
+    res.json({ message: 'Order status updated', order });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update order status', error: err.message });
+  }
+};
+
+// ✅ Update Order Status (Admin)
+const adminUpdateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(id);
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    order.status = status;
+    await order.save();
+
+    res.json({ message: 'Order status updated by admin', status: order.status });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update status', error: err.message });
+  }
+};
+
 module.exports = {
   getPendingRestaurants,
   approveRestaurant,
   deleteRestaurant,
   getAllOrders,
+  updateOrderStatus,
+  adminUpdateOrderStatus,
 };

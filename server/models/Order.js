@@ -27,8 +27,10 @@ const orderSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ['Placed', 'Preparing', 'Out for Delivery', 'Delivered'],
-    default: 'Placed'
+    default: 'Pending'
   }
 }, { timestamps: true });
+
+
 
 module.exports = mongoose.model('Order', orderSchema);

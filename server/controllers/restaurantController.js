@@ -1,4 +1,3 @@
-// server/controllers/restaurantController.js
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
@@ -22,7 +21,6 @@ const addProduct = async (req, res) => {
     res.status(500).json({ message: 'Failed to add product', error: err.message });
   }
 };
-
 
 // ✅ Edit Product
 const updateProduct = async (req, res) => {
@@ -91,9 +89,38 @@ const getRestaurantOrders = async (req, res) => {
   }
 };
 
+// ✅ Update Order Status (Restaurant)
+const updateOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const order = await Order.findById(id).populate('items.product');
+
+    if (!order) return res.status(404).json({ message: 'Order not found' });
+
+    // Check if at least one item belongs to this restaurant
+    const belongsToRestaurant = order.items.some(
+      item => item.product.restaurant.toString() === req.user.id
+    );
+
+    if (!belongsToRestaurant) {
+      return res.status(403).json({ message: 'Not authorized to update this order' });
+    }
+
+    order.status = status;
+    await order.save();
+
+    res.json({ message: 'Order status updated', order });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to update status', error: err.message });
+  }
+};
+
 module.exports = {
   addProduct,
   updateProduct,
   deleteProduct,
   getRestaurantOrders,
+  updateOrderStatus, // ✅ export this
 };
