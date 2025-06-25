@@ -1,6 +1,8 @@
+// server/controllers/restaurantController.js
 const Product = require('../models/Product');
+const Order = require('../models/Order');
 
-// Add Product (already done)
+// ✅ Add Product
 const addProduct = async (req, res) => {
   try {
     const { name, description, price, category, imageUrl } = req.body;
@@ -29,7 +31,6 @@ const updateProduct = async (req, res) => {
     const product = await Product.findById(id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    // Check if product belongs to logged-in restaurant
     if (product.restaurant.toString() !== req.user.id) {
       return res.status(403).json({ message: 'Not authorized to update this product' });
     }
@@ -60,8 +61,38 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+// ✅ View Restaurant Orders
+const getRestaurantOrders = async (req, res) => {
+  const restaurantId = req.user.id;
+
+  try {
+    const restaurantProducts = await Product.find({ restaurant: restaurantId }).select('_id');
+    const productIds = restaurantProducts.map(p => p._id.toString());
+
+    const orders = await Order.find({ 'items.product': { $in: productIds } })
+      .populate('customer', 'name email')
+      .populate('items.product')
+      .sort({ createdAt: -1 });
+
+    const filteredOrders = orders.map(order => {
+      const relevantItems = order.items.filter(item =>
+        item.product.restaurant.toString() === restaurantId
+      );
+      return {
+        ...order.toObject(),
+        items: relevantItems
+      };
+    });
+
+    res.json(filteredOrders);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch restaurant orders', error: err.message });
+  }
+};
+
 module.exports = {
   addProduct,
   updateProduct,
   deleteProduct,
+  getRestaurantOrders,
 };
