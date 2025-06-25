@@ -37,9 +37,38 @@ const getCustomerOrders = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch orders', error: err.message });
   }
 };
+const searchProducts = async (req, res) => {
+  const { keyword } = req.query;
+
+  try {
+    const regex = new RegExp(keyword, 'i');
+
+    const restaurants = await User.find({
+      role: 'restaurant',
+      name: regex,
+      approved: true,
+    }).select('_id');
+
+    const restaurantIds = restaurants.map((r) => r._id);
+
+    const products = await Product.find({
+      $or: [
+        { name: regex },
+        { category: regex },
+        { restaurant: { $in: restaurantIds } },
+      ],
+    }).populate('restaurant', 'name');
+
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: 'Search failed', error: err.message });
+  }
+};
 
 module.exports = {
   getApprovedRestaurants,
   getRestaurantMenu,
-  getCustomerOrders, // ⬅️ Export new function
+  getCustomerOrders,
+  getCustomerOrders,
+  searchProducts,
 };
