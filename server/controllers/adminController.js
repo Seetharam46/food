@@ -1,7 +1,8 @@
 // server/controllers/adminController.js
 const User = require('../models/User');
+const Order = require('../models/Order');
 
-// Get all pending restaurants
+// ✅ Get all pending restaurants
 const getPendingRestaurants = async (req, res) => {
   try {
     const pending = await User.find({ role: 'restaurant', approved: false });
@@ -11,7 +12,7 @@ const getPendingRestaurants = async (req, res) => {
   }
 };
 
-// Approve a restaurant
+// ✅ Approve a restaurant
 const approveRestaurant = async (req, res) => {
   const { id } = req.params;
   try {
@@ -28,7 +29,7 @@ const approveRestaurant = async (req, res) => {
   }
 };
 
-// Delete a restaurant (reject)
+// ✅ Delete a restaurant (reject)
 const deleteRestaurant = async (req, res) => {
   const { id } = req.params;
   try {
@@ -44,8 +45,23 @@ const deleteRestaurant = async (req, res) => {
   }
 };
 
+// ✅ Admin - View all orders
+const getAllOrders = async (req, res) => {
+  try {
+    const orders = await Order.find()
+      .populate('customer', 'name email')
+      .populate('items.product')
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch orders', error: err.message });
+  }
+};
+
 module.exports = {
   getPendingRestaurants,
   approveRestaurant,
   deleteRestaurant,
+  getAllOrders,
 };
