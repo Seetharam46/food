@@ -28,6 +28,8 @@ app.use('/api/admin', adminRoutes);
 const customerRoutes = require('./routes/customerRoutes');
 app.use('/api/customer', customerRoutes);
 
+const cartRoutes = require('./routes/cartRoutes');
+app.use('/api/cart', cartRoutes);
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)
