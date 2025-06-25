@@ -2,10 +2,10 @@
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
-// ✅ Add Product
+// ✅ Add Product with Image Upload (Cloudinary)
 const addProduct = async (req, res) => {
   try {
-    const { name, description, price, category, imageUrl } = req.body;
+    const { name, description, price, category } = req.body;
 
     const newProduct = new Product({
       restaurant: req.user.id,
@@ -13,7 +13,7 @@ const addProduct = async (req, res) => {
       description,
       price,
       category,
-      imageUrl,
+      imageUrl: req.file?.path || '', // image from multer-cloudinary
     });
 
     const savedProduct = await newProduct.save();
@@ -22,6 +22,7 @@ const addProduct = async (req, res) => {
     res.status(500).json({ message: 'Failed to add product', error: err.message });
   }
 };
+
 
 // ✅ Edit Product
 const updateProduct = async (req, res) => {
