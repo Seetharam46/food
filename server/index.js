@@ -15,8 +15,16 @@ app.use(express.json());
 // 👇 Import your auth routes
 const authRoutes = require('./routes/authRoutes');
 
+const restaurantRoutes = require('./routes/restaurantRoutes');
+app.use('/api/restaurant', restaurantRoutes);
+
+
 // 👇 Use the routes
 app.use('/api/auth', authRoutes);
+
+const adminRoutes = require('./routes/adminRoutes');
+app.use('/api/admin', adminRoutes);
+
 
 // MongoDB Connection
 mongoose.connect(process.env.MONGO_URI)

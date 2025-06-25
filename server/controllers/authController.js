@@ -14,12 +14,17 @@ const register = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await User.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: role || 'customer',
-    });
+    if (role === 'admin') {
+  return res.status(403).json({ message: 'Admin registration is not allowed' });
+}
+
+const user = await User.create({
+  name,
+  email,
+  password: hashedPassword,
+  role: role || 'customer',
+});
+
 
     res.status(201).json({
       _id: user._id,
