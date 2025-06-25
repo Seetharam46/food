@@ -1,7 +1,7 @@
-// server/controllers/orderController.js
 const Cart = require('../models/Cart');
 const Order = require('../models/Order');
 
+// ✅ Place a new order from cart
 const placeOrder = async (req, res) => {
   const customerId = req.user.id;
 
@@ -26,7 +26,7 @@ const placeOrder = async (req, res) => {
       totalAmount
     });
 
-    // Clear cart after placing order
+    // Clear the cart after placing the order
     cart.items = [];
     await cart.save();
 
@@ -36,7 +36,8 @@ const placeOrder = async (req, res) => {
   }
 };
 
-const getOrders = async (req, res) => {
+// ✅ View customer order history
+const getCustomerOrders = async (req, res) => {
   const customerId = req.user.id;
 
   try {
@@ -52,5 +53,5 @@ const getOrders = async (req, res) => {
 
 module.exports = {
   placeOrder,
-  getOrders
+  getCustomerOrders
 };

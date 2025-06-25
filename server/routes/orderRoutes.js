@@ -1,13 +1,17 @@
-// server/routes/orderRoutes.js
 const express = require('express');
 const router = express.Router();
-const { placeOrder, getOrders } = require('../controllers/orderController');
+const {
+  placeOrder,
+  getCustomerOrders
+} = require('../controllers/orderController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// Customer-only
+// 🛒 Place a new order
 router.post('/', authMiddleware, roleMiddleware('customer'), placeOrder);
-router.get('/', authMiddleware, roleMiddleware('customer'), getOrders);
+
+// 🧾 View customer's past orders
+router.get('/my', authMiddleware, roleMiddleware('customer'), getCustomerOrders);
 
 module.exports = router;
