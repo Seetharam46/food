@@ -65,6 +65,20 @@ const searchProducts = async (req, res) => {
   }
 };
 
+exports.getApprovedRestaurants = async (req, res) => {
+  try {
+    const restaurants = await User.find({
+      role: "restaurant",
+      approved: true,
+    }).select("name imageUrl _id"); // ✅ select name, imageUrl, id ONLY
+
+    res.status(200).json(restaurants);
+  } catch (err) {
+    console.error("Error fetching restaurants:", err);
+    res.status(500).json({ message: "Failed to fetch restaurants" });
+  }
+};
+
 module.exports = {
   getApprovedRestaurants,
   getRestaurantMenu,
