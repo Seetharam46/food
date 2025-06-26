@@ -1,17 +1,25 @@
 .navbar {
-  background-color: #333;
+  background-color: #3f4e62; /* Elegant slate blue-gray */
   color: white;
-  padding: 10px 20px;
+  padding: 12px 24px;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1000;
 }
 
+
+
+/* 🔖 Branding and toggle */
 .navbar-brand {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
+/* 🍔 Mobile toggle icon */
 .menu-toggle {
-  font-size: 24px;
+  font-size: 26px;
   background: none;
   color: white;
   border: none;
@@ -19,31 +27,52 @@
   cursor: pointer;
 }
 
+/* 🔗 Navigation links */
 .links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 15px;
+  align-items: center;
+  gap: 20px;
   margin-top: 10px;
+  flex-wrap: wrap;
+  transition: all 0.3s ease-in-out;
 }
 
 .links a {
   color: white;
   text-decoration: none;
+  padding: 6px 10px;
+  font-size: 15px;
+  transition: background 0.2s ease;
+  border-radius: 4px;
 }
 
+.links a:hover {
+  background-color: rgba(255, 255, 255, 0.1); /* soft hover glow */
+  border-radius: 4px;
+}
+
+
+/* 👤 User info */
 .user-info {
-  color: #aaa;
+  color: #bbb;
   margin-left: auto;
-  margin-right: 10px;
+  font-size: 14px;
 }
 
+/* 🔓 Logout button */
 .logout-btn {
-  background-color: #ff5f5f;
+  background-color: #ff4d4d;
   color: white;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
+  padding: 7px 14px;
+  font-size: 14px;
+  border-radius: 5px;
   cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #e84343;
 }
 
 /* 📱 Responsive styles */
@@ -55,17 +84,21 @@
   .links {
     display: none;
     flex-direction: column;
-    margin-top: 10px;
+    align-items: flex-start;
+    margin-top: 15px;
+    gap: 10px;
   }
 
   .links.open {
     display: flex;
   }
 
-  .links a, .logout-btn, .user-info {
+  .links a,
+  .logout-btn,
+  .user-info {
     width: 100%;
-    padding: 8px 0;
     text-align: left;
+    padding: 10px 0;
   }
 
   .logout-btn {

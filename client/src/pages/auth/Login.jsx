@@ -9,19 +9,15 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  // Handle login form submission
   const handleLogin = async (e) => {
     e.preventDefault();
-
     try {
       const res = await axios.post("/auth/login", { email, password });
       const { token } = res.data;
 
-      // Save token and decode role
       localStorage.setItem("token", token);
       const decoded = jwtDecode(token);
 
-      // Role-based redirection
       if (decoded.role === "admin") {
         navigate("/admin");
       } else if (decoded.role === "restaurant") {
@@ -56,11 +52,12 @@ const Login = () => {
         />
 
         <button type="submit">Login</button>
-      </form>
 
-      <p style={{ textAlign: "center" }}>
-        Don't have an account? <a href="/register">Register</a>
-      </p>
+        {/* ✅ Moved this inside form for visual consistency */}
+        <p>
+          Don't have an account? <a href="/register">Register</a>
+        </p>
+      </form>
     </div>
   );
 };
