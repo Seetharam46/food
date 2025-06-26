@@ -15,42 +15,85 @@ const RestaurantsPage = () => {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h2>All Restaurants</h2>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "20px" }}>
+    <div style={styles.container}>
+      <h2 style={styles.heading}>Explore Restaurants</h2>
+      <div style={styles.grid}>
         {restaurants.map((r) => (
           <div
             key={r._id}
             onClick={() => navigate(`/customer/restaurant/${r._id}`)}
-            style={{
-              width: "200px",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              cursor: "pointer",
-              textAlign: "center",
-              padding: "10px",
-              boxShadow: "0 0 8px rgba(0,0,0,0.1)",
-              transition: "transform 0.2s",
+            style={styles.card}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = "translateY(-6px)";
+              e.currentTarget.style.boxShadow = "0 12px 24px rgba(0,0,0,0.12)";
             }}
-            onMouseEnter={e => e.currentTarget.style.transform = "scale(1.05)"}
-            onMouseLeave={e => e.currentTarget.style.transform = "scale(1)"}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = "translateY(0)";
+              e.currentTarget.style.boxShadow = "0 6px 12px rgba(0,0,0,0.08)";
+            }}
           >
             <img
               src={r.imageUrl}
               alt={r.name}
-              style={{
-                width: "100%",
-                height: "120px",
-                objectFit: "cover",
-                borderRadius: "6px",
-              }}
+              style={styles.image}
             />
-            <h4 style={{ margin: "10px 0 0" }}>{r.name}</h4>
+            <h4 style={styles.name}>{r.name}</h4>
+            {r.description && <p style={styles.description}>{r.description}</p>}
           </div>
         ))}
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    padding: "40px 60px",
+    fontFamily: "'Segoe UI', sans-serif",
+    background: "#f9fbfd",
+    minHeight: "100vh",
+  },
+  heading: {
+    fontSize: "32px",
+    marginBottom: "30px",
+    color: "#222",
+    textAlign: "center",
+  },
+  grid: {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "30px",
+    justifyContent: "center",
+  },
+  card: {
+    width: "240px",
+    background: "#fff",
+    borderRadius: "12px",
+    cursor: "pointer",
+    textAlign: "center",
+    padding: "15px",
+    boxShadow: "0 6px 12px rgba(0,0,0,0.08)",
+    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+  },
+  image: {
+    width: "100%",
+    height: "150px",
+    objectFit: "cover",
+    borderRadius: "10px",
+    marginBottom: "12px",
+  },
+  name: {
+    fontSize: "18px",
+    fontWeight: "600",
+    color: "#333",
+    margin: "0 0 5px",
+  },
+  description: {
+    fontSize: "14px",
+    color: "#666",
+    padding: "0 10px",
+    minHeight: "40px",
+  },
 };
 
 export default RestaurantsPage;
