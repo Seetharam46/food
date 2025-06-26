@@ -1,31 +1,47 @@
-// server/controllers/authController.js
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cloudinary = require('../utils/cloudinary');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
 
 const register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password, role, address, description } = req.body;
 
   try {
+    // Check for existing user
     const userExists = await User.findOne({ email });
-    if (userExists) return res.status(400).json({ message: 'User already exists' });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
 
+    // Restrict admin self-registration
+    if (role === 'admin') {
+      return res.status(403).json({ message: 'Admin registration is not allowed' });
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    if (role === 'admin') {
-  return res.status(403).json({ message: 'Admin registration is not allowed' });
-}
+    // Upload image if present
+    let imageUrl = '';
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path);
+      imageUrl = result.secure_url;
+    }
 
-const user = await User.create({
-  name,
-  email,
-  password: hashedPassword,
-  role: role || 'customer',
-});
+    // Create user with or without restaurant-specific fields
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+      role: role || 'customer',
+      address: role === 'restaurant' ? address : undefined,
+      description: role === 'restaurant' ? description : undefined,
+      imageUrl: role === 'restaurant' ? imageUrl : undefined,
+    });
 
-
+    // Respond with token and user info
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -33,8 +49,10 @@ const user = await User.create({
       role: user.role,
       token: jwt.sign({ id: user._id, role: user.role }, JWT_SECRET, { expiresIn: '7d' }),
     });
+
   } catch (error) {
-    res.status(500).json({ message: 'Registration failed', error });
+    console.error("Registration Error:", error);
+    res.status(500).json({ message: 'Registration failed', error: error.message });
   }
 };
 
