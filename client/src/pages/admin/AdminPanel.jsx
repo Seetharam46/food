@@ -1,111 +1,129 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import '../../styles/pages/AdminPanel.css';
+import React, { useState, useEffect } from "react";
+import axios from "../../api/axios";
+import "./AdminPanel.css";
 
 const AdminPanel = () => {
-  const [activeTab, setActiveTab] = useState('restaurants');
-  const [restaurants, setRestaurants] = useState([]);
+  const [activeTab, setActiveTab] = useState("users");
   const [users, setUsers] = useState([]);
+  const [restaurants, setRestaurants] = useState([]);
   const [orders, setOrders] = useState([]);
 
-  const token = localStorage.getItem('token');
-
   useEffect(() => {
-    if (activeTab === 'restaurants') fetchRestaurants();
-    else if (activeTab === 'users') fetchUsers();
-    else if (activeTab === 'orders') fetchOrders();
+    if (activeTab === "users") fetchUsers();
+    else if (activeTab === "restaurants") fetchRestaurants();
+    else fetchOrders();
   }, [activeTab]);
-
-  const fetchRestaurants = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/admin/restaurants/pending', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      setRestaurants(res.data);
-    } catch (err) {
-      console.error('Failed to load restaurants', err);
-    }
-  };
-
-  const approveRestaurant = async (id) => {
-    try {
-      await axios.put(`http://localhost:5000/api/admin/restaurants/${id}/approve`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      alert('Restaurant approved');
-      fetchRestaurants();
-    } catch (err) {
-      console.error('Failed to approve restaurant', err);
-    }
-  };
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/users', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get("/admin/users");
       setUsers(res.data);
     } catch (err) {
-      console.error('Failed to load users', err);
+      alert("Failed to fetch users");
+    }
+  };
+
+  const fetchRestaurants = async () => {
+    try {
+      const res = await axios.get("/admin/restaurants/pending");
+      setRestaurants(res.data);
+    } catch (err) {
+      alert("Failed to fetch restaurants");
     }
   };
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/orders', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await axios.get("/admin/orders");
       setOrders(res.data);
     } catch (err) {
-      console.error('Failed to load orders', err);
+      alert("Failed to fetch orders");
+    }
+  };
+
+  const approveRestaurant = async (id) => {
+    try {
+      await axios.put(`/admin/restaurants/${id}/approve`);
+      fetchRestaurants();
+    } catch (err) {
+      alert("Approval failed");
+    }
+  };
+
+  const deleteRestaurant = async (id) => {
+    try {
+      await axios.delete(`/admin/restaurants/${id}`);
+      fetchRestaurants();
+    } catch (err) {
+      alert("Deletion failed");
     }
   };
 
   return (
     <div className="admin-panel">
       <h2>Admin Panel</h2>
-
-      <div className="admin-tabs">
-        <button className={activeTab === 'restaurants' ? 'active' : ''} onClick={() => setActiveTab('restaurants')}>Pending Restaurants</button>
-        <button className={activeTab === 'users' ? 'active' : ''} onClick={() => setActiveTab('users')}>Users</button>
-        <button className={activeTab === 'orders' ? 'active' : ''} onClick={() => setActiveTab('orders')}>Orders</button>
+      <div className="tabs">
+        <button onClick={() => setActiveTab("users")}>Users</button>
+        <button onClick={() => setActiveTab("restaurants")}>Restaurants</button>
+        <button onClick={() => setActiveTab("orders")}>Orders</button>
       </div>
 
-      <div className="admin-section">
-        {activeTab === 'restaurants' && (
-          <>
-            <h3>Pending Restaurants</h3>
-            {restaurants.length === 0 ? <p>No pending approvals</p> : restaurants.map((rest) => (
-              <div key={rest._id} className="admin-item">
-                <p><strong>{rest.name}</strong> - {rest.email}</p>
-                <button onClick={() => approveRestaurant(rest._id)}>Approve</button>
-              </div>
-            ))}
-          </>
+      <div className="tab-content">
+        {activeTab === "users" && (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Role</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map(u => (
+                <tr key={u._id}>
+                  <td>{u.name}</td><td>{u.email}</td><td>{u.role}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
 
-        {activeTab === 'users' && (
-          <>
-            <h3>Registered Users</h3>
-            {users.map((user) => (
-              <div key={user._id} className="admin-item">
-                <p><strong>{user.name}</strong> ({user.role}) - {user.email}</p>
-              </div>
-            ))}
-          </>
+        {activeTab === "restaurants" && (
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th><th>Email</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {restaurants.map(r => (
+                <tr key={r._id}>
+                  <td>{r.name}</td><td>{r.email}</td>
+                  <td>
+                    <button onClick={() => approveRestaurant(r._id)}>✅ Approve</button>
+                    <button onClick={() => deleteRestaurant(r._id)}>❌ Delete</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
 
-        {activeTab === 'orders' && (
-          <>
-            <h3>All Orders</h3>
-            {orders.map((order) => (
-              <div key={order._id} className="admin-item">
-                <p><strong>Customer:</strong> {order.customer?.name || 'Deleted'}</p>
-                <p><strong>Amount:</strong> ₹{order.totalAmount}</p>
-                <p><strong>Status:</strong> {order.status}</p>
-              </div>
-            ))}
-          </>
+        {activeTab === "orders" && (
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th><th>Total</th><th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {orders.map(o => (
+                <tr key={o._id}>
+                  <td>{o.customer?.name}</td>
+                  <td>₹{o.totalAmount}</td>
+                  <td>{o.status}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>

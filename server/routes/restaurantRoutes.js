@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload'); // For image uploads
+const { getMyProducts } = require('../controllers/restaurantController');
 
 const {
   addProduct,
   updateProduct,
   deleteProduct,
   getRestaurantOrders,
-  updateOrderStatus, // ✅ Include update order status
+  updateOrderStatus,
 } = require('../controllers/restaurantController');
 
 const authMiddleware = require('../middlewares/authMiddleware');
@@ -35,5 +36,7 @@ router.get('/orders', authMiddleware, roleMiddleware('restaurant'), getRestauran
 
 // ✅ Update order status
 router.put('/orders/:id/status', authMiddleware, roleMiddleware('restaurant'), updateOrderStatus);
+
+router.get('/products', authMiddleware, roleMiddleware('restaurant'), getMyProducts);
 
 module.exports = router;

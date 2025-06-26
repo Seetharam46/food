@@ -1,27 +1,23 @@
-# Node modules
-node_modules/
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Build output
-build/
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# testing
+/coverage
 
-# dotenv environment files (if used)
-.env
+# production
+/build
+
+# misc
+.DS_Store
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# OS-specific
-.DS_Store
-Thumbs.db
-
-# Editor-specific
-.vscode/
-.idea/
-*.sublime-project
-*.sublime-workspace
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

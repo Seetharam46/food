@@ -117,10 +117,21 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
+// GET /api/restaurant/products
+const getMyProducts = async (req, res) => {
+  try {
+    const products = await Product.find({ restaurant: req.user.id });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch products', error: err.message });
+  }
+};
+
 module.exports = {
   addProduct,
   updateProduct,
   deleteProduct,
   getRestaurantOrders,
-  updateOrderStatus, // ✅ export this
+  updateOrderStatus,
+  getMyProducts, 
 };
