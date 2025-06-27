@@ -23,15 +23,20 @@ const MyOrders = () => {
               <span><strong>Order ID:</strong> {order._id}</span>
               <span><strong>Status:</strong> <span style={styles.status(order.status)}>{order.status}</span></span>
             </div>
+
             <div style={styles.date}>
               Placed on: {new Date(order.createdAt).toLocaleString()}
+            </div>
+
+            <div style={styles.restaurant}>
+              <strong>Restaurant:</strong> {order.restaurant?.name || "Unknown"}
             </div>
 
             <ul style={styles.itemList}>
               {order.items.map((item, index) => (
                 <li key={index} style={styles.item}>
-                  <span>{item.name}</span>
-                  <span>₹{item.price} × {item.quantity}</span>
+                  <span>{item.product?.name}</span>
+                  <span>₹{item.product?.price} × {item.quantity}</span>
                 </li>
               ))}
             </ul>
@@ -79,6 +84,11 @@ const styles = {
   date: {
     fontSize: "13px",
     color: "#666",
+    marginBottom: "10px",
+  },
+  restaurant: {
+    fontSize: "14px",
+    color: "#444",
     marginBottom: "15px",
   },
   itemList: {
@@ -103,10 +113,12 @@ const styles = {
     padding: "2px 8px",
     borderRadius: "6px",
     backgroundColor:
-      status === "Pending"
+      status === "Placed"
         ? "#ffc107"
         : status === "Preparing"
         ? "#17a2b8"
+        : status === "Out for Delivery"
+        ? "#007bff"
         : "#28a745",
     color: "#fff",
     fontSize: "12px",

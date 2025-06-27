@@ -1,15 +1,19 @@
-// server/controllers/customerController.js
 const User = require('../models/User');
 const Product = require('../models/Product');
-const Order = require('../models/Order'); // ⬅️ Add this
+const Order = require('../models/Order');
 
 // ✅ Fetch all approved restaurants
 const getApprovedRestaurants = async (req, res) => {
   try {
-    const restaurants = await User.find({ role: 'restaurant', approved: true }).select('-password');
-    res.json(restaurants);
+    const restaurants = await User.find({
+      role: "restaurant",
+      approved: true,
+    }).select("name imageUrl _id"); // ✅ Only required fields
+
+    res.status(200).json(restaurants);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch restaurants', error: err.message });
+    console.error("Error fetching restaurants:", err);
+    res.status(500).json({ message: "Failed to fetch restaurants" });
   }
 };
 
@@ -25,12 +29,12 @@ const getRestaurantMenu = async (req, res) => {
   }
 };
 
-
-// ✅ Customer Order History
+// ✅ Customer Order History (updated with restaurant population)
 const getCustomerOrders = async (req, res) => {
   try {
     const orders = await Order.find({ customer: req.user.id })
       .populate('items.product', 'name price imageUrl')
+      .populate('restaurant', 'name imageUrl') // ✅ populate restaurant
       .sort({ createdAt: -1 });
 
     res.json(orders);
@@ -38,6 +42,8 @@ const getCustomerOrders = async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch orders', error: err.message });
   }
 };
+
+// ✅ Search products by keyword (name/category/restaurant)
 const searchProducts = async (req, res) => {
   const { keyword } = req.query;
 
@@ -66,24 +72,9 @@ const searchProducts = async (req, res) => {
   }
 };
 
-exports.getApprovedRestaurants = async (req, res) => {
-  try {
-    const restaurants = await User.find({
-      role: "restaurant",
-      approved: true,
-    }).select("name imageUrl _id"); // ✅ select name, imageUrl, id ONLY
-
-    res.status(200).json(restaurants);
-  } catch (err) {
-    console.error("Error fetching restaurants:", err);
-    res.status(500).json({ message: "Failed to fetch restaurants" });
-  }
-};
-
 module.exports = {
   getApprovedRestaurants,
   getRestaurantMenu,
-  getCustomerOrders,
   getCustomerOrders,
   searchProducts,
 };

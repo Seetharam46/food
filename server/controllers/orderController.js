@@ -16,6 +16,14 @@ const placeOrder = async (req, res) => {
       return res.status(400).json({ message: 'Cart is empty' });
     }
 
+    // ✅ Check if all products belong to the same restaurant
+    const restaurantIds = new Set(cart.items.map(item => item.product.restaurant?.toString()));
+    if (restaurantIds.size !== 1) {
+      return res.status(400).json({ message: 'All items must be from the same restaurant' });
+    }
+
+    const restaurantId = [...restaurantIds][0];
+
     const orderItems = cart.items.map(item => ({
       product: item.product._id,
       quantity: item.quantity
@@ -27,6 +35,7 @@ const placeOrder = async (req, res) => {
 
     const order = await Order.create({
       customer: customerId,
+      restaurant: restaurantId, // ✅ store restaurant
       items: orderItems,
       address,
       totalAmount
@@ -47,7 +56,8 @@ const getCustomerOrders = async (req, res) => {
 
   try {
     const orders = await Order.find({ customer: customerId })
-      .populate('items.product')
+      .populate('restaurant', 'name')              // ✅ add restaurant name
+      .populate('items.product', 'name price imageUrl')
       .sort({ createdAt: -1 });
 
     res.json(orders);
