@@ -14,18 +14,18 @@ const Navbar = () => {
     navigate("/login");
   };
 
-  if (!role) return null;
+  if (!role || !user) return null;
 
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <h3>🍽️ QuickBite</h3>
+        <h2 className="logo">🥗 QuickBite</h2>
         <button className="menu-toggle" onClick={() => setOpen(!open)}>
           ☰
         </button>
       </div>
 
-      <div className={`links ${open ? "open" : ""}`}>
+      <div className={`navbar-links ${open ? "open" : ""}`}>
         {role === "admin" && (
           <Link to="/admin" onClick={() => setOpen(false)}>Dashboard</Link>
         )}
@@ -44,8 +44,11 @@ const Navbar = () => {
             <Link to="/customer/orders" onClick={() => setOpen(false)}>My Orders</Link>
           </>
         )}
-        <span className="user-info">👤 {user?.name}</span>
-        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+
+        <div className="navbar-right">
+          <span className="user-info"> 👤 Welcome, <strong>{user?.name}</strong></span>
+          <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        </div>
       </div>
     </nav>
   );

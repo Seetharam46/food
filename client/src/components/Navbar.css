@@ -1,25 +1,30 @@
+/* ===== Premium Navbar with Emerald Gradient and Modern Glow ===== */
 .navbar {
-  background-color: #3f4e62; /* Elegant slate blue-gray */
-  color: white;
-  padding: 12px 24px;
+  background: linear-gradient(135deg, #3caea3, #2a7f74); /* Emerald to Teal */
+  color: #ffffff;
+  padding: 16px 32px;
   font-family: 'Segoe UI', sans-serif;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  position: relative;
-  z-index: 1000;
-}
-
-
-
-/* 🔖 Branding and toggle */
-.navbar-brand {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  flex-wrap: wrap;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.08);
 }
 
-/* 🍔 Mobile toggle icon */
-.menu-toggle {
+.logo {
   font-size: 26px;
+  font-weight: 700;
+  margin: 0;
+  color: #fff;
+  text-shadow: 1px 1px 2px #00000040;
+}
+
+.menu-toggle {
+  font-size: 28px;
   background: none;
   color: white;
   border: none;
@@ -27,78 +32,94 @@
   cursor: pointer;
 }
 
-/* 🔗 Navigation links */
-.links {
+.navbar-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
   margin-top: 10px;
   flex-wrap: wrap;
-  transition: all 0.3s ease-in-out;
 }
 
-.links a {
-  color: white;
+.navbar-links a {
+  color: #ffffff;
   text-decoration: none;
-  padding: 6px 10px;
+  padding: 10px 16px;
   font-size: 15px;
-  transition: background 0.2s ease;
-  border-radius: 4px;
+  font-weight: 500;
+  border-radius: 6px;
+  background-color: transparent;
+  transition: all 0.25s ease-in-out;
 }
 
-.links a:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* soft hover glow */
-  border-radius: 4px;
+.navbar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
 }
 
-
-/* 👤 User info */
-.user-info {
-  color: #bbb;
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 18px;
   margin-left: auto;
-  font-size: 14px;
+  flex-wrap: wrap;
 }
 
-/* 🔓 Logout button */
+.user-info {
+  font-size: 15px;
+  color: #ecfefc;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 6px 12px;
+  border-radius: 6px;
+  backdrop-filter: blur(4px);
+}
+
 .logout-btn {
-  background-color: #ff4d4d;
+  background-color: #ff5e5e;
   color: white;
   border: none;
-  padding: 7px 14px;
+  padding: 9px 18px;
   font-size: 14px;
-  border-radius: 5px;
+  border-radius: 6px;
   cursor: pointer;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   transition: background 0.3s ease;
 }
 
 .logout-btn:hover {
-  background-color: #e84343;
+  background-color: #e14b4b;
+  transform: scale(1.05);
 }
 
-/* 📱 Responsive styles */
+/* Responsive for mobile */
 @media (max-width: 768px) {
   .menu-toggle {
     display: block;
   }
 
-  .links {
-    display: none;
+  .navbar {
     flex-direction: column;
     align-items: flex-start;
-    margin-top: 15px;
-    gap: 10px;
   }
 
-  .links.open {
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .navbar-links.open {
     display: flex;
   }
 
-  .links a,
+  .navbar-links a,
   .logout-btn,
   .user-info {
     width: 100%;
     text-align: left;
-    padding: 10px 0;
   }
 
   .logout-btn {
