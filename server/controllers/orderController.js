@@ -1,11 +1,16 @@
 const Cart = require('../models/Cart');
 const Order = require('../models/Order');
 
-// ✅ Place a new order from cart
+// ✅ Place a new order from cart with address
 const placeOrder = async (req, res) => {
   const customerId = req.user.id;
+  const { address } = req.body;
 
   try {
+    if (!address || address.trim() === '') {
+      return res.status(400).json({ message: 'Address is required to place the order' });
+    }
+
     const cart = await Cart.findOne({ customer: customerId }).populate('items.product');
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ message: 'Cart is empty' });
@@ -23,10 +28,10 @@ const placeOrder = async (req, res) => {
     const order = await Order.create({
       customer: customerId,
       items: orderItems,
+      address,
       totalAmount
     });
 
-    // Clear the cart after placing the order
     cart.items = [];
     await cart.save();
 

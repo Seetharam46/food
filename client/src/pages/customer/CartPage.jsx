@@ -3,6 +3,7 @@ import axios from "../../api/axios";
 
 const CartPage = () => {
   const [cart, setCart] = useState([]);
+  const [address, setAddress] = useState("");
 
   const fetch = async () => {
     try {
@@ -23,9 +24,15 @@ const CartPage = () => {
   };
 
   const placeOrder = async () => {
+    if (!address.trim()) {
+      alert("Please enter your delivery address.");
+      return;
+    }
+
     try {
-      await axios.post("/orders");
+      await axios.post("/orders", { address });
       alert("Order placed!");
+      setAddress("");
       fetch();
     } catch (err) {
       alert("Order failed");
@@ -36,7 +43,9 @@ const CartPage = () => {
     return cart.reduce((sum, c) => sum + c.product.price * c.quantity, 0);
   };
 
-  useEffect(() => { fetch(); }, []);
+  useEffect(() => {
+    fetch();
+  }, []);
 
   return (
     <div style={styles.container}>
@@ -46,14 +55,19 @@ const CartPage = () => {
         <p style={styles.empty}>Your cart is empty.</p>
       ) : (
         <>
-          {cart.map(c => (
+          {cart.map((c) => (
             <div key={c.product._id} style={styles.card}>
               <div style={styles.itemRow}>
                 <div>
                   <h3 style={styles.title}>{c.product.name}</h3>
-                  <p style={styles.detail}>₹{c.product.price} × {c.quantity}</p>
+                  <p style={styles.detail}>
+                    ₹{c.product.price} × {c.quantity}
+                  </p>
                 </div>
-                <button style={styles.removeBtn} onClick={() => remove(c.product._id)}>
+                <button
+                  style={styles.removeBtn}
+                  onClick={() => remove(c.product._id)}
+                >
                   Remove
                 </button>
               </div>
@@ -63,6 +77,13 @@ const CartPage = () => {
           <div style={styles.total}>
             <strong>Total: ₹{calculateTotal()}</strong>
           </div>
+
+          <textarea
+            placeholder="Enter delivery address..."
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            style={styles.addressBox}
+          />
 
           <button style={styles.placeBtn} onClick={placeOrder}>
             Place Order
@@ -126,6 +147,15 @@ const styles = {
     textAlign: "right",
     marginTop: "25px",
     marginBottom: "10px",
+  },
+  addressBox: {
+    width: "100%",
+    padding: "10px",
+    borderRadius: "6px",
+    fontSize: "15px",
+    border: "1px solid #ccc",
+    marginBottom: "15px",
+    resize: "vertical",
   },
   placeBtn: {
     display: "block",

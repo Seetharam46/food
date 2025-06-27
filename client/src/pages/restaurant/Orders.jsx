@@ -18,10 +18,10 @@ const Orders = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "Placed": return "#6c757d";       // Gray
-      case "Preparing": return "#17a2b8";    // Blue
-      case "Out for Delivery": return "#ffc107"; // Yellow
-      case "Delivered": return "#28a745";    // Green
+      case "Placed": return "#6c757d";
+      case "Preparing": return "#17a2b8";
+      case "Out for Delivery": return "#ffc107";
+      case "Delivered": return "#28a745";
       default: return "#6c757d";
     }
   };
@@ -36,9 +36,15 @@ const Orders = () => {
         orders.map(order => (
           <div key={order._id} style={styles.card}>
             <div style={styles.topRow}>
-              <div style={styles.customerBox}>
-                <span style={styles.label}>👤 Customer:</span>
-                <span style={styles.value}>{order.customer?.name || "Unknown"}</span>
+              <div>
+                <div style={styles.customerBox}>
+                  <span style={styles.label}>👤 Customer:</span>
+                  <span style={styles.value}>{order.customer?.name || "Unknown"}</span>
+                </div>
+                <div style={styles.customerBox}>
+                  <span style={styles.label}>📍 Address:</span>
+                  <span style={styles.value}>{order.address}</span>
+                </div>
               </div>
               <div style={{ ...styles.statusBadge, backgroundColor: getStatusColor(order.status) }}>
                 {order.status}
@@ -104,13 +110,14 @@ const styles = {
   topRow: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
     marginBottom: "15px",
   },
   customerBox: {
     display: "flex",
     gap: "10px",
     alignItems: "center",
+    marginBottom: "4px",
   },
   label: {
     fontSize: "15px",

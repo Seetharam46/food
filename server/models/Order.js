@@ -1,4 +1,3 @@
-// server/models/Order.js
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
@@ -20,6 +19,10 @@ const orderSchema = new mongoose.Schema({
       }
     }
   ],
+  address: {
+    type: String,
+    required: true
+  },
   totalAmount: {
     type: Number,
     required: true
@@ -30,7 +33,5 @@ const orderSchema = new mongoose.Schema({
     default: 'Placed'
   }
 }, { timestamps: true });
-
-
 
 module.exports = mongoose.model('Order', orderSchema);

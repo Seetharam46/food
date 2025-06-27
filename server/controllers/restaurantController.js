@@ -12,7 +12,7 @@ const addProduct = async (req, res) => {
       description,
       price,
       category,
-      imageUrl: req.file?.path || '', // image from multer-cloudinary
+      imageUrl: req.file?.path || '',
     });
 
     const savedProduct = await newProduct.save();
@@ -60,7 +60,7 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-// ✅ View Restaurant Orders
+// ✅ View Restaurant Orders (Includes Address + Customer Info)
 const getRestaurantOrders = async (req, res) => {
   const restaurantId = req.user.id;
 
@@ -89,7 +89,7 @@ const getRestaurantOrders = async (req, res) => {
   }
 };
 
-// ✅ Update Order Status (Restaurant)
+// ✅ Update Order Status
 const updateOrderStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -99,7 +99,6 @@ const updateOrderStatus = async (req, res) => {
 
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    // Check if at least one item belongs to this restaurant
     const belongsToRestaurant = order.items.some(
       item => item.product.restaurant.toString() === req.user.id
     );
@@ -117,7 +116,7 @@ const updateOrderStatus = async (req, res) => {
   }
 };
 
-// GET /api/restaurant/products
+// ✅ Get All Products by Restaurant
 const getMyProducts = async (req, res) => {
   try {
     const products = await Product.find({ restaurant: req.user.id });
@@ -133,5 +132,5 @@ module.exports = {
   deleteProduct,
   getRestaurantOrders,
   updateOrderStatus,
-  getMyProducts, 
+  getMyProducts
 };
