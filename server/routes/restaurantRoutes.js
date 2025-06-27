@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../middlewares/upload'); // For image uploads
 const { getMyProducts } = require('../controllers/restaurantController');
-
 const {
   addProduct,
   updateProduct,
@@ -10,13 +9,12 @@ const {
   getRestaurantOrders,
   updateOrderStatus,
 } = require('../controllers/restaurantController');
-
 const authMiddleware = require('../middlewares/authMiddleware');
 const roleMiddleware = require('../middlewares/roleMiddleware');
 
-// 🔐 Restaurant-only routes
+const Product = require('../models/Product'); // ✅ Needed for public product fetch
 
-// ✅ Add product with image
+// 🔐 Restaurant-only routes
 router.post(
   '/products',
   authMiddleware,
@@ -25,18 +23,20 @@ router.post(
   addProduct
 );
 
-// ✅ Update product
 router.put('/products/:id', authMiddleware, roleMiddleware('restaurant'), updateProduct);
-
-// ✅ Delete product
 router.delete('/products/:id', authMiddleware, roleMiddleware('restaurant'), deleteProduct);
-
-// ✅ View restaurant's orders
 router.get('/orders', authMiddleware, roleMiddleware('restaurant'), getRestaurantOrders);
-
-// ✅ Update order status
 router.put('/orders/:id/status', authMiddleware, roleMiddleware('restaurant'), updateOrderStatus);
-
 router.get('/products', authMiddleware, roleMiddleware('restaurant'), getMyProducts);
+
+// ✅ Public route: Get products of a specific restaurant (for customers)
+router.get('/products/restaurant/:id', async (req, res) => {
+  try {
+    const products = await Product.find({ restaurant: req.params.id });
+    res.json(products);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch products', error: err.message });
+  }
+});
 
 module.exports = router;

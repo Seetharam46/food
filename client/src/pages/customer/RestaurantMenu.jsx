@@ -6,11 +6,19 @@ const RestaurantMenu = () => {
   const [menu, setMenu] = useState([]);
   const { id } = useParams();
 
-  useEffect(() => {
-    axios.get(`/customer/restaurants/${id}/menu`)
-      .then(res => setMenu(res.data))
-      .catch(err => console.error("Failed to load menu", err));
-  }, [id]);
+ useEffect(() => {
+  console.log("Restaurant ID:", id); // Check if this is correct
+  console.log("Token:", localStorage.getItem("token")); // Check if token exists
+
+  axios.get(`/customer/restaurants/${id}/menu`)
+    .then(res => {
+      console.log("✅ Menu fetched:", res.data);
+      setMenu(res.data);
+    })
+    .catch(err => {
+      console.error("❌ Failed to load menu:", err.response?.data || err.message);
+    });
+}, [id]);
 
   const addToCart = async (productId) => {
     try {
